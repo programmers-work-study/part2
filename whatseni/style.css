@@ -72,3 +72,60 @@ body {
   top: 50%;
   transform: translate(-50%, -50%);
 }
+
+@keyframes rotate-loading {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes loading-text-opacity {
+  0% {
+    opacity: 0;
+  }
+  20% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.LoadingContainer, .Loading {
+  height: 100px;
+  position: relative;
+  width: 100px;
+  border-radius: 100%;
+  transition: all 0.5s ease-in-out;
+}
+
+.LoadingContainer {
+  margin: 40px auto;
+}
+
+.Loading {
+  border: 2px solid transparent;
+  border-color: transparent #000 transparent #000;
+  animation: rotate-loading 1.5s linear 0s infinite normal;
+  transform-origin: 50% 50%;
+}
+
+.LoadingText {
+  animation: loading-text-opacity 2s linear 0s infinite normal;
+  color: #000;
+  font-size: 10px;
+  font-weight: bold;
+  margin-top: 45px;
+  opacity: 0;
+  position: absolute;
+  text-align: center;
+  text-transform: uppercase;
+  top: 0;
+  width: 100px;
+}

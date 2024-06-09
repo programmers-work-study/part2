@@ -12,6 +12,6 @@ const fetchAPI = async (url) => {
 
 export const API = {
   fetchRootList: () => { return fetchAPI(URL) },
-  fetchFolderList: () => { return fetchAPI(`${URL}/${folderID}`) },
-  fetchFileImage: () => { return fetchAPI(`${IMG_URL}/${filePath}`) }
+  fetchFolderList: (folderID) => { return fetchAPI(`${URL}/${folderID}`) },
+  fetchFileImage: (filePath) => { return fetchAPI(`${IMG_URL}/${filePath}`) }
 }

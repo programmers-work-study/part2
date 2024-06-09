@@ -1,1 +1,5 @@
-export default class ImageView { }
+export default class ImageView {
+  constructor($target) {
+    this.$ImageViewTarget = $target;
+  }
+}
