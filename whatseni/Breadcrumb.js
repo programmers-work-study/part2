@@ -1,7 +1,5 @@
 export default class BreadCrumb {
-  constructor($target, path) {
-    this.path = path;
-    this.$BraedTarget = $target;
+  constructor({ $target, path }) {
 
     this.$BraedCrumbContainer = document.createElement('nav');
     this.$BraedCrumbContainer.className = 'Breadcrumb';

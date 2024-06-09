@@ -1,8 +1,8 @@
-import BreadCrumb from "./Breadcrumb";
-import ImageView from "./ImageView";
-import Loading from "./Loading";
-import Nodes from "./Nodes";
-import { API } from "./api";
+import BreadCrumb from "./Breadcrumb.js";
+import ImageView from "./ImageView.js";
+import Loading from "./Loading.js";
+import Nodes from "./Nodes.js";
+import { API } from "./api.js";
 
 export default class App {
   constructor($target) {
@@ -10,26 +10,29 @@ export default class App {
     this.currentPath = 'root';
     this.fileList = [];
 
-    this.breadCrumb = new BreadCrumb({ $target, path: currentPath });
+    this.breadCrumb = new BreadCrumb({ $target, path: this.currentPath });
     this.nodes = new Nodes({ $target, fileList: this.fileList });
     this.imageView = new ImageView({ $target });
     this.loading = new Loading({ $target });
+
+    this.onRootList();
   }
 
   onRootList() {
-    this.showLoading();
+    // this.showLoading();
     API.fetchRootList().then((res) => {
       this.fileList = res;
-      this.hideLoading();
+      this.nodes.setState(res);
+      // this.hideLoading();
     })
   }
 
-  onPathList(path) {
-    API.fetchFolderList(path)
+  onPathList(folderID) {
+    API.fetchFolderList(folderID)
   }
 
-  onFileImage(path) {
-    API.fetchFileImage(path)
+  onFileImage(filePath) {
+    API.fetchFileImage(filePath)
   }
 
   showLoading() {
