@@ -1,18 +1,11 @@
 export default class Nodes {
-  constructor({ $target, fileList }) {
+  constructor({ $target, fileList, onClick }) {
     this.$NodesTarget = $target;
     this.data = fileList;
+    this.onClick = onClick;
 
     this.$NodesContainer = document.createElement('div');
     this.$NodesContainer.className = 'Nodes';
-
-    // this.$Node = document.createElement('div');
-
-    // this.$PrevNode = document.createElement('img');
-    // this.$PrevNode.src = "./assets/prev.png";
-
-    // this.$Node.appendChild(this.$PrevNode);
-    // this.$NodesContainer.appendChild(this.$Node);
 
     $target.appendChild(this.$NodesContainer);
   }
@@ -21,17 +14,28 @@ export default class Nodes {
     this.data = nextData;
     this.setNodes();
   }
+
   setNodes() {
     const DIR = "DIRECTORY";
     const FILE = "FILE";
-    this.data.map((item, idx) => {
-      const el = `
-        <div class="Node" date-id=${item.id}>
-          <img src=${item.type === DIR ? "./assets/directory.png" : "./assets/file.png"}
-          <div>${item.name}</div>
-        </div>
-      `;
-      document.querySelector('.Nodes').appendChild(el);
-    })
+    if (this.data) {
+      const appendEl = this.data.map((item, idx) => {
+        return `
+          <div class="Node" data-id=${item.id}>
+            <img src=${item.type === DIR ? "./assets/directory.png" : "./assets/file.png"}
+            <div>${item.name}</div>
+          </div>
+        `;
+      }).join('');
+
+      this.$NodesContainer.innerHTML = appendEl;
+      this.$NodesContainer.querySelectorAll(".Node").forEach(($item, index) => {
+        $item.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const id = e.currentTarget.dataset.id;
+          this.onClick(id);
+        });
+      });
+    }
   }
 }

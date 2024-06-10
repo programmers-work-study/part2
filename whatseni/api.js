@@ -4,7 +4,7 @@ const IMG_URL = `https://fe-dev-matching-2021-03-serverlessdeploymentbuck-1ooef0
 const fetchAPI = async (url) => {
   try {
     const response = await fetch(url, { method: 'GET' });
-    if (response) return response;
+    if (response) return response.json();
   } catch (e) {
     console.error(e);
   }

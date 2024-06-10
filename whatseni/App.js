@@ -7,32 +7,43 @@ import { API } from "./api.js";
 export default class App {
   constructor($target) {
     this.$mainTarget = $target;
-    this.currentPath = 'root';
+    this.pathDepth = ['root'];
     this.fileList = [];
+    this.isRoot = false;
 
-    this.breadCrumb = new BreadCrumb({ $target, path: this.currentPath });
-    this.nodes = new Nodes({ $target, fileList: this.fileList });
+    this.breadCrumb = new BreadCrumb({ $target, pathDepth: this.pathDepth });
+    this.nodes = new Nodes({ $target, fileList: this.fileList, onClick: this.onPathList });
     this.imageView = new ImageView({ $target });
     this.loading = new Loading({ $target });
 
     this.onRootList();
   }
 
-  onRootList() {
+
+  setState(nextData) {
+    this.fileList = nextData;
+    this.nodes.setState(nextData);
+  }
+
+  async onRootList() {
+    this.showLoading();
+    const result = await API.fetchRootList();
+    if (result) this.setState(result);
+    this.hideLoading();
+  }
+
+  async onPathList(folderID) {
     // this.showLoading();
-    API.fetchRootList().then((res) => {
-      this.fileList = res;
-      this.nodes.setState(res);
-      // this.hideLoading();
-    })
+    const result = await API.fetchFolderList(folderID);
+    if (result) this.setState(result);
+    // this.hideLoading();
   }
 
-  onPathList(folderID) {
-    API.fetchFolderList(folderID)
-  }
-
-  onFileImage(filePath) {
-    API.fetchFileImage(filePath)
+  async onFileImage(filePath) {
+    this.showLoading();
+    const result = await API.fetchFileImage(filePath)
+    if (result) this.setState(result);
+    this.hideLoading();
   }
 
   showLoading() {
