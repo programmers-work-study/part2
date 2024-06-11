@@ -3,17 +3,21 @@ export default class BreadCrumb {
     this.$BraedCrumbContainer = document.createElement('nav');
     this.$BraedCrumbContainer.className = 'Breadcrumb';
 
+    this.pathDepth = pathDepth;
     $target.appendChild(this.$BraedCrumbContainer);
-
-    this.setPath(pathDepth);
   }
 
-  setPath(pathDepth) {
-    const appendEl = pathDepth.map((path) => {
+  setState(nextData) {
+    this.pathDepth = nextData;
+    this.setPath();
+  }
+
+  setPath() {
+    const appendEl = this.pathDepth.map((path) => {
       return `
-        <div>${path}</div>
-      `;
+          <div>${path}</div>
+        `;
     }).join("");
-    this.$BraedCrumbContainer.innerHTML = appendEl;
+    this.$BraedCrumbContainer.innerHTML = `<div>root</div>${appendEl}`;
   }
 }

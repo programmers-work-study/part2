@@ -7,12 +7,23 @@ import { API } from "./api.js";
 export default class App {
   constructor($target) {
     this.$mainTarget = $target;
-    this.pathDepth = ['root'];
+    this.pathDepth = [];
     this.fileList = [];
     this.isRoot = false;
 
     this.breadCrumb = new BreadCrumb({ $target, pathDepth: this.pathDepth });
-    this.nodes = new Nodes({ $target, fileList: this.fileList, onClick: this.onPathList });
+    this.nodes = new Nodes({
+      $target, fileList: this.fileList, onClick: async (folderID, folderName) => {
+        this.showLoading();
+        const result = await API.fetchFolderList(folderID);
+        if (result) {
+          this.setState(result);
+          this.pathDepth.push(folderName);
+          this.setPathState(this.pathDepth);
+        }
+        this.hideLoading();
+      }
+    });
     this.imageView = new ImageView({ $target });
     this.loading = new Loading({ $target });
 
@@ -25,18 +36,16 @@ export default class App {
     this.nodes.setState(nextData);
   }
 
+  setPathState(nextData) {
+    this.pathDepth = nextData;
+    this.breadCrumb.setState(nextData);
+  }
+
   async onRootList() {
     this.showLoading();
     const result = await API.fetchRootList();
     if (result) this.setState(result);
     this.hideLoading();
-  }
-
-  async onPathList(folderID) {
-    // this.showLoading();
-    const result = await API.fetchFolderList(folderID);
-    if (result) this.setState(result);
-    // this.hideLoading();
   }
 
   async onFileImage(filePath) {

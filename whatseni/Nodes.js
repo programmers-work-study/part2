@@ -21,7 +21,7 @@ export default class Nodes {
     if (this.data) {
       const appendEl = this.data.map((item, idx) => {
         return `
-          <div class="Node" data-id=${item.id}>
+          <div class="Node" data-id=${item.id} data-name=${item.name}>
             <img src=${item.type === DIR ? "./assets/directory.png" : "./assets/file.png"}
             <div>${item.name}</div>
           </div>
@@ -33,7 +33,8 @@ export default class Nodes {
         $item.addEventListener("click", (e) => {
           e.stopPropagation();
           const id = e.currentTarget.dataset.id;
-          this.onClick(id);
+          const name = e.currentTarget.dataset.name;
+          this.onClick(id, name);
         });
       });
     }
