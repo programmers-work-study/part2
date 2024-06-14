@@ -4,7 +4,9 @@ import Nodes from "./Nodes.js";
 import Component from "./core/Component.js";
 import ImageViewer from "./ImageViewer.js";
 import Loading from "./Loading.js";
-
+import {fetchData} from "../utility/fetchData.js";
+//TODO api 요청 try,catch  추상화 필요
+//TODO 이미 요청한 데이터에 대히서는 캐싱 적용
 export default class App extends Component {
   initState() {
     return {path: [], nodes: [], selected: null, isLoading: false};
@@ -38,49 +40,40 @@ export default class App extends Component {
         const nextPath = [...this.state.path];
         nextPath.pop();
         if (nextPath.length === 0) {
-          try {
-            this.setState({...this.state, isLoading: true});
-            const data = await fetch(API.GET_ROOT).then((res) => {
-              if (!res.ok) throw Error("통신 에러 ");
-              return res.json();
-            });
-            this.setState({...this.state, path: [], nodes: data});
-          } catch (error) {
-            alert("통신에 실패했습니다. 다시 시도해주세요");
-          } finally {
-            this.setState({...this.state, isLoading: false});
-          }
+          fetchData({
+            url: API.GET_ROOT,
+            setLoading: (state) => {
+              this.setState({...this.state, isLoading: state});
+            },
+            setData: (data) => {
+              this.setState({...this.state, path: [], nodes: data});
+            },
+          });
           return;
         }
         const prevNode = nextPath[nextPath.length - 1];
-        try {
-          this.setState({...this.state, isLoading: true});
-          const data = await fetch(API.GET_ID(prevNode.id)).then((res) => {
-            if (!res.ok) throw Error("통신 에러 ");
-            return res.json();
-          });
-          this.setState({...this.state, path: nextPath, nodes: data});
-        } catch (error) {
-          alert("통신에 실패했습니다. 다시 시도해주세요");
-        } finally {
-          this.setState({...this.state, isLoading: false});
-        }
+        fetchData({
+          url: API.GET_ID(prevNode.id),
+          setLoading: (state) => {
+            this.setState({...this.state, isLoading: state});
+          },
+          setData: (data) => {
+            this.setState({...this.state, path: nextPath, nodes: data});
+          },
+        });
         return;
       }
       if (node && node.dataset.type === "DIRECTORY") {
         const id = node.id;
-        try {
-          this.setState({...this.state, isLoading: true});
-          const data = await fetch(API.GET_ID(id)).then((res) => {
-            if (!res.ok) throw Error("통신 중 문제가 생겼습니다. ");
-            return res.json();
-          });
-          this.setState({...this.state, path: [...this.state.path, {name: node.dataset.name, id: id}], nodes: data});
-        } catch (e) {
-          alert("통신에 실패했습니다. 잠시 후 다시 시도해주세요");
-        } finally {
-          this.setState({...this.state, isLoading: false});
-        }
+        fetchData({
+          url: API.GET_ID(id),
+          setLoading: (state) => {
+            this.setState({...this.state, isLoading: state});
+          },
+          setData: (data) => {
+            this.setState({...this.state, path: [...this.state.path, {name: node.dataset.name, id: id}], nodes: data});
+          },
+        });
         return;
       }
       if (node && node.dataset.type === "FILE") {
@@ -93,35 +86,28 @@ export default class App extends Component {
       if (breadcrumbItem) {
         const id = breadcrumbItem.getAttribute("id");
         if (!id) {
-          try {
-            this.setState({...this.state, isLoading: true});
-            const data = await fetch(API.GET_ROOT).then((res) => {
-              if (!res.ok) throw Error("통신 에러 ");
-              return res.json();
-            });
-            this.setState({...this.state, path: [], nodes: data});
-          } catch (error) {
-            alert("통신에 실패했습니다. 다시 시도해주세요");
-          } finally {
-            this.setState({...this.state, isLoading: false});
-          }
+          fetchData({
+            url: API.GET_ROOT,
+            setLoading: (state) => {
+              this.setState({...this.state, isLoading: state});
+            },
+            setData: (data) => {
+              this.setState({...this.state, path: [], nodes: data});
+            },
+          });
           return;
         }
-        try {
-          this.setState({...this.state, isLoading: true});
-          const data = await fetch(API.GET_ID(id)).then((res) => {
-            if (!res.ok) throw Error("통신 에러 ");
-            return res.json();
-          });
-          const targetIndex = this.state.path.find((p) => p.id === id);
-          const nextPath = [this.state.path].slice(0, targetIndex);
-          this.setState({...this.state, path: nextPath, nodes: data});
-        } catch (e) {
-          alert("통신 중 문제 다시 시도 ");
-        } finally {
-          this.setState({...this.state, isLoading: false});
-        }
-
+        fetchData({
+          url: API.GET_ID(prevNode.id),
+          setLoading: (state) => {
+            this.setState({...this.state, isLoading: state});
+          },
+          setData: (data) => {
+            const targetIndex = this.state.path.find((p) => p.id === id);
+            const nextPath = [this.state.path].slice(0, targetIndex);
+            this.setState({...this.state, path: nextPath, nodes: data});
+          },
+        });
         return;
       }
       if (event.target.classList.contains("Modal") && this.state.selected) {
@@ -133,17 +119,15 @@ export default class App extends Component {
         this.setState({...this.state, selected: null});
       }
     });
-    try {
-      this.setState({...this.state, isLoading: true});
-      const data = await fetch(API.GET_ROOT).then((res) => {
-        if (!res.ok) throw Error("통신 장애 ");
-        return res.json();
-      });
-      this.setState({...this.state, nodes: data});
-    } catch (e) {
-      alert("에러 발생 다시 시동해주세요");
-    } finally {
-      this.setState({...this.state, isLoading: false});
-    }
+    fetchData({
+      url: API.GET_ROOT,
+      setLoading: (state) => {
+        this.setState({...this.state, isLoading: state});
+      },
+      setData: (data) => {
+        this.setState({...this.state, path: [], nodes: data});
+      },
+    });
+    return;
   }
 }
