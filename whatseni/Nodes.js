@@ -1,42 +1,42 @@
 export default class Nodes {
-  constructor({ $target, fileList, onClick }) {
+  constructor({ $target, state, onClick }) {
     this.$NodesTarget = $target;
-    this.data = fileList;
+    this.state = state;
     this.onClick = onClick;
 
     this.$NodesContainer = document.createElement('div');
     this.$NodesContainer.className = 'Nodes';
 
     $target.appendChild(this.$NodesContainer);
+    this.render();
   }
 
   setState(nextData) {
     this.data = nextData;
-    this.setNodes();
+    this.render();
   }
 
-  setNodes() {
+  render() {
     const DIR = "DIRECTORY";
     const FILE = "FILE";
-    if (this.data) {
-      const appendEl = this.data.map((item, idx) => {
-        return `
-          <div class="Node" data-id=${item.id} data-name=${item.name}>
-            <img src=${item.type === DIR ? "./assets/directory.png" : "./assets/file.png"}
-            <div>${item.name}</div>
-          </div>
-        `;
-      }).join('');
+    if (!this.state.isRoot) {
+      const prevNode = document.createElement('div');
+      prevNode.className = 'Node';
+      prevNode.innerHTML = '<img src="./assets/prev.png" />';
+      prevNode.addEventListener('click', () => {
 
-      this.$NodesContainer.innerHTML = appendEl;
-      this.$NodesContainer.querySelectorAll(".Node").forEach(($item, index) => {
-        $item.addEventListener("click", (e) => {
-          e.stopPropagation();
-          const id = e.currentTarget.dataset.id;
-          const name = e.currentTarget.dataset.name;
-          this.onClick(id, name);
-        });
-      });
+      })
+      this.$NodesContainer.appendChild(prevNode);
     }
+    this.state.fileList.forEach((node) => {
+      const nodeEl = document.createElement('div');
+      nodeEl.className = 'Node';
+      nodeEl.innerHTML = `
+        <img src=${item.type === DIR ? "./assets/directory.png" : "./assets/file.png"}/>
+        <div>${item.name}</div>
+      `;
+      nodeEl.addEventListener('click', () => this.onClick(node));
+      this.$NodesContainer.appendChild(nodeEl);
+    })
   }
 }
