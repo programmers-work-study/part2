@@ -65,6 +65,7 @@ export default class App extends Component {
       }
       if (node && node.dataset.type === "DIRECTORY") {
         const id = node.id;
+
         fetchData({
           url: API.GET_ID(id),
           setLoading: (state) => {
@@ -85,6 +86,7 @@ export default class App extends Component {
 
       if (breadcrumbItem) {
         const id = breadcrumbItem.getAttribute("id");
+
         if (!id) {
           fetchData({
             url: API.GET_ROOT,
@@ -98,13 +100,13 @@ export default class App extends Component {
           return;
         }
         fetchData({
-          url: API.GET_ID(prevNode.id),
+          url: API.GET_ID(id),
           setLoading: (state) => {
             this.setState({...this.state, isLoading: state});
           },
           setData: (data) => {
-            const targetIndex = this.state.path.find((p) => p.id === id);
-            const nextPath = [this.state.path].slice(0, targetIndex);
+            const targetIndex = this.state.path.findIndex((p) => p.id === id);
+            const nextPath = this.state.path.slice(0, targetIndex + 1);
             this.setState({...this.state, path: nextPath, nodes: data});
           },
         });
