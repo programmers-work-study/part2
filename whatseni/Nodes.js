@@ -19,7 +19,6 @@ export default class Nodes {
     this.$NodesContainer.innerHTML = ``;
     const DIR = "DIRECTORY";
     const FILE = "FILE";
-    console.log(this.state)
     if (!this.state.isRoot) {
       const prevNode = document.createElement('div');
       prevNode.className = 'Node';
