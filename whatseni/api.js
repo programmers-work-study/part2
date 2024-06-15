@@ -5,7 +5,7 @@ const fetchAPI = async (url) => {
     const response = await fetch(url, { method: 'GET' });
     if (response) return response.json();
   } catch (e) {
-    console.error(e);
+    window.alert('api error!');
   }
 }
 

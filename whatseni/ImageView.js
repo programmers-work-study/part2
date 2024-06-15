@@ -27,7 +27,7 @@ export default class ImageView {
   render() {
     this.$ImageView.innerHTML = this.state.selectedFile ? `
       <div class="content">
-        <img src="https://fe-dev-matching-2021-03-serverlessdeploymentbuck-1ooef0cg8h3vq.s3.ap-northeast-2.amazonaws.com/public${this.state.selectedFilePath}"/>
+        <img src="https://fe-dev-matching-2021-03-serverlessdeploymentbuck-1ooef0cg8h3vq.s3.ap-northeast-2.amazonaws.com/public${this.state.selectedFile}"/>
       </div>
     ` : '';
     this.$ImageView.style.display = this.state.selectedFile ? 'block' : 'none';
