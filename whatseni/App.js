@@ -14,6 +14,8 @@ export default class App {
       selectedFile: null
     }
 
+    this.cache = {};
+
     this.breadCrumb = new BreadCrumb({ $target, state: this.state, onClick: this.onBreadCrumbClick.bind(this) });
     this.nodes = new Nodes({
       $target, state: this.state, onClick: this.onNodeClick.bind(this)
@@ -34,24 +36,45 @@ export default class App {
 
   async onRootList() {
     this.showLoading();
-    const result = await API.fetchRootList();
-    this.setState({
-      pathDepth: [],
-      isRoot: true,
-      fileList: result
-    });
+    if (this.cache['root']) {
+      this.setState({
+        pathDepth: [],
+        isRoot: true,
+        fileList: this.cache['root']
+      })
+    } else {
+      const result = await API.fetchRootList();
+      this.cache['root'] = result;
+      this.setState({
+        pathDepth: [],
+        isRoot: true,
+        fileList: result
+      });
+    }
+
     this.hideLoading();
   }
 
   async onFolderList(nodeId, folderName) {
     this.showLoading();
-    const result = await API.fetchFolderList(nodeId);
-    const nextPathDepth = this.state.pathDepth.concat({ id: nodeId, name: folderName });
-    this.setState({
-      pathDepth: nextPathDepth,
-      isRoot: false,
-      fileList: result,
-    });
+    if (this.cache[nodeId]) {
+      const nextPath = this.state.pathDepth.concat({ id: nodeId, name: folderName });
+      this.setState({
+        pathDepth: nextPath,
+        isRoot: false,
+        fileList: this.cache[nodeId],
+      })
+    } else {
+      const result = await API.fetchFolderList(nodeId);
+      this.cache[nodeId] = result;
+      const nextPathDepth = this.state.pathDepth.concat({ id: nodeId, name: folderName });
+      this.setState({
+        pathDepth: nextPathDepth,
+        isRoot: false,
+        fileList: result,
+      });
+    }
+
     this.hideLoading();
   }
 
