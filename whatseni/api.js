@@ -1,5 +1,4 @@
 const URL = 'https://l9817xtkq3.execute-api.ap-northeast-2.amazonaws.com/dev'
-const IMG_URL = `https://fe-dev-matching-2021-03-serverlessdeploymentbuck-1ooef0cg8h3vq.s3.ap-northeast-2.amazonaws.com/public`
 
 const fetchAPI = async (url) => {
   try {
@@ -13,5 +12,4 @@ const fetchAPI = async (url) => {
 export const API = {
   fetchRootList: () => { return fetchAPI(URL) },
   fetchFolderList: (folderID) => { return fetchAPI(`${URL}/${folderID}`) },
-  fetchFileImage: (filePath) => { return fetchAPI(`${IMG_URL}/${filePath}`) }
 }

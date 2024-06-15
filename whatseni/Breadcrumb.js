@@ -16,14 +16,15 @@ export default class BreadCrumb {
   }
 
   render() {
+    this.$BraedCrumbContainer.innerHTML = '';
     const rootEl = document.createElement('div');
-    rootEl.textContext = 'root';
+    rootEl.textContent = 'root';
     rootEl.addEventListener('click', () => this.onClick(null));
-    this.$BraedCrumbContainer.appendChild();
+    this.$BraedCrumbContainer.appendChild(rootEl);
 
     this.state.pathDepth.forEach((node, idx) => {
       const el = document.createElement('div');
-      el.innerText = node.name;
+      el.textContent = node.name;
       el.addEventListener('click', () => this.onClick(idx));
       this.$BraedCrumbContainer.appendChild(el);
     })

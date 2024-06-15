@@ -26,15 +26,16 @@ export default class App {
 
 
   setState(nextData) {
-    this.state = nextData;
-    this.nodes.setState(nextData);
-    this.breadCrumb.setState(nextData);
+    this.state = { ...this.state, ...nextData };
+    this.breadCrumb.setState(this.state);
+    this.nodes.setState(this.state);
+    this.imageView.setState(this.state);
   }
 
   async onRootList() {
     this.showLoading();
     const result = await API.fetchRootList();
-    if (result) this.setState({
+    this.setState({
       pathDepth: [],
       isRoot: true,
       fileList: result
@@ -43,22 +44,38 @@ export default class App {
   }
 
   async onFolderList(nodeId, folderName) {
+    this.showLoading();
     const result = await API.fetchFolderList(nodeId);
-    const nextPathDepth = this.state.pathDepth.concat(folderName);
+    const nextPathDepth = this.state.pathDepth.concat({ id: nodeId, name: folderName });
     this.setState({
       pathDepth: nextPathDepth,
       isRoot: false,
       fileList: result,
     });
+    this.hideLoading();
   }
 
-  onNodeClick(node) {
+  async onNodeClick(node) {
     if (node.type === 'DIRECTORY') {
       this.onFolderList(node.id, node.name);
     } else if (node.type === 'FILE') {
       this.setState({
         selectedFile: node.filePath
       })
+    } else {
+      const newPathDepth = [...this.state.pathDepth];
+      newPathDepth.pop();
+
+      if (newPathDepth.length === 0) {
+        await this.onRootList();
+      } else {
+        const lastNode = newPathDepth[newPathDepth.length - 1];
+        await this.onFolderList(lastNode.id, lastNode.name);
+        this.setState({
+          pathDepth: newPathDepth,
+          isRoot: newPathDepth.length === 0
+        });
+      }
     }
   }
 
