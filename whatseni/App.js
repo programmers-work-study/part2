@@ -13,15 +13,12 @@ export default class App {
       fileList: [],
       selectedFile: null
     }
-    // this.pathDepth = [];
-    // this.fileList = [];
-    // this.isRoot = true;
 
-    this.breadCrumb = new BreadCrumb({ $target, state: this.state });
+    this.breadCrumb = new BreadCrumb({ $target, state: this.state, onClick: this.onBreadCrumbClick.bind(this) });
     this.nodes = new Nodes({
       $target, state: this.state, onClick: this.onNodeClick.bind(this)
     });
-    this.imageView = new ImageView({ $target });
+    this.imageView = new ImageView({ $target, onClose: this.onCloseImage.bind(this) });
     this.loading = new Loading({ $target });
 
     this.onRootList();
@@ -66,7 +63,15 @@ export default class App {
   }
 
   onBreadCrumbClick(idx) {
+    if (idx === null) this.onRootList();
+    else {
+      const nextPath = this.state.pathDepth.slice(0, idx + 1);
+      this.onFolderList(nextPath[nextPath.length - 1].id, nextPath[nextPath.length - 1].name)
+    }
+  }
 
+  onCloseImage() {
+    this.setState({ selectedFile: null });
   }
 
   showLoading() {
