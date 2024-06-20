@@ -19,7 +19,6 @@ export async function fetchData({url, setLoading, setData}) {
       : await fetch(url).then(async (res) => {
           if (!res.ok) throw Error("연결 실패");
           const returnData = await res.json();
-          console.log(returnData);
           const stringified = JSON.stringify(returnData);
           storage.setItem(url, stringified);
           return returnData;
