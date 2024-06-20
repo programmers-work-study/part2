@@ -9,6 +9,9 @@ export default class Nodes extends Component {
     </div>`) + this.props.nodes.map((node) => nodeTemplate(node.type, node.name, node.id)).join("")
     );
   }
+  setup() {
+    this.$target.addEventListener("click", this.props.onClick);
+  }
 }
 
 const nodeTemplate = (type, name, id) => `

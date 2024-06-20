@@ -6,12 +6,16 @@ import Component from "./core/Component.js";
 */
 export default class Breadcrumb extends Component {
   template() {
-    if (!this.props) return;
+    if (!this.props.path) return;
     return `
     
     <div class="breadcrumb-item" >root</div>
-    ${this.props.map((dir) => `<div class="breadcrumb-item" id="${dir.id}">${dir.name}</div>`).join("")}
+    ${this.props.path.map((dir) => `<div class="breadcrumb-item" id="${dir.id}">${dir.name}</div>`).join("")}
     
     `;
+  }
+
+  setup() {
+    this.$target.addEventListener("click", this.props.onClick);
   }
 }
