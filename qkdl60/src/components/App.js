@@ -79,8 +79,13 @@ export default class App extends Component {
       }
       if (node && node.dataset.type === "FILE") {
         const id = node.id;
-        const filePath = this.state.nodes.filter((node) => node.id === id)[0].filePath;
-        this.setState({...this.state, selected: filePath});
+        const file = this.state.nodes.find((node) => node.id === id);
+
+        if (file) {
+          const filePath = file.filePath;
+          this.setState({...this.state, selected: filePath});
+        }
+
         return;
       }
 
